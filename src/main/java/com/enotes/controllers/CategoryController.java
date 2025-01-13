@@ -1,5 +1,7 @@
 package com.enotes.controllers;
 
+import com.enotes.dto.CategoryDto;
+import com.enotes.dto.CategoryResponse;
 import com.enotes.entities.Category;
 import com.enotes.services.impl.CategoryServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -20,15 +22,22 @@ public class CategoryController {
     private final CategoryServiceImpl categoryService;
 
     @PostMapping("/save-category")
-    public ResponseEntity<?> addCategory(@RequestBody Category category){
-        Boolean saveCategory = categoryService.saveCategory(category);
+    public ResponseEntity<?> addCategory(@RequestBody CategoryDto categoryDto){
+        Boolean saveCategory = categoryService.saveCategory(categoryDto);
         if (saveCategory) return new ResponseEntity<>("Category Saved", HttpStatus.CREATED);
         else return new ResponseEntity<>("Category Not Saved", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @GetMapping("/get-categories")
     public ResponseEntity<?> getAllCategories(){
-        List<Category> categories = categoryService.getCategories();
+        List<CategoryDto> categories = categoryService.getCategories();
+        if (!CollectionUtils.isEmpty(categories)) return new ResponseEntity<>(categories, HttpStatus.OK);
+        else return new ResponseEntity<>("Categories are not available.", HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping("/active-categories")
+    public ResponseEntity<?> getActiveCategories(){
+        List<CategoryResponse> categories = categoryService.getActiveCategories();
         if (!CollectionUtils.isEmpty(categories)) return new ResponseEntity<>(categories, HttpStatus.OK);
         else return new ResponseEntity<>("Categories are not available.", HttpStatus.NOT_FOUND);
     }
