@@ -31,11 +31,30 @@ public class CategoryServiceImpl implements ICategoryService {
 
         Category category = mapper.map(categoryDto, Category.class);
 
-        category.setIsDeleted(false);
-        category.setCreatedBy(1);
-        category.setCreatedDate(new Date());
+        if (ObjectUtils.isEmpty(category.getId())){
+            category.setIsDeleted(false);
+            category.setCreatedBy(1);
+            category.setCreatedDate(new Date());
+        } else {
+            updateCategory(category);
+        }
+
         Category saveCategory = categoryRepository.save(category);
         return !ObjectUtils.isEmpty(saveCategory);
+    }
+
+    private void updateCategory(Category category) {
+        Optional<Category> findByCategory = categoryRepository.findById(category.getId());
+        if (findByCategory.isPresent()){
+            Category existCategory = findByCategory.get();
+            category.setName(existCategory.getName());
+            category.setDescription(existCategory.getDescription());
+            category.setCreatedBy(existCategory.getCreatedBy());
+            category.setCreatedDate(existCategory.getCreatedDate());
+            category.setIsDeleted(existCategory.getIsDeleted());
+            category.setUpdatedBy(1);
+            category.setUpdatedOn(new Date());
+        }
     }
 
     @Override

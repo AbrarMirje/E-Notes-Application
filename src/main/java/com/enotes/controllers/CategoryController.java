@@ -4,6 +4,7 @@ import com.enotes.dto.CategoryDto;
 import com.enotes.dto.CategoryResponse;
 import com.enotes.entities.Category;
 import com.enotes.services.impl.CategoryServiceImpl;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 
@@ -16,7 +17,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/category")
-
+@Tag(name = "Category APIs")
 public class CategoryController {
 
     private final CategoryServiceImpl categoryService;
