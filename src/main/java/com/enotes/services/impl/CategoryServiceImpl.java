@@ -3,6 +3,7 @@ package com.enotes.services.impl;
 import com.enotes.dto.CategoryDto;
 import com.enotes.dto.CategoryResponse;
 import com.enotes.entities.Category;
+import com.enotes.exception.ResourceNotFoundException;
 import com.enotes.repositories.ICategoryRepository;
 import com.enotes.services.ICategoryService;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +13,6 @@ import org.springframework.util.ObjectUtils;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -75,11 +75,16 @@ public class CategoryServiceImpl implements ICategoryService {
     }
 
     @Override
-    public CategoryDto getCategory(Integer id) {
-        Optional<Category> findByCategory = categoryRepository.findByIdAndIsDeletedFalse(id);
+    public CategoryDto getCategory(Integer id) throws ResourceNotFoundException {
+        Category category = categoryRepository.findByIdAndIsDeletedFalse(id)
+                .orElseThrow(()->new ResourceNotFoundException("Category not found with id: " + id));
 
-        if (findByCategory.isPresent()) {
-            Category category = findByCategory.get();
+        if (!ObjectUtils.isEmpty(category)) {
+
+            if (category.getName() == null){
+                throw new IllegalArgumentException("Name is null");
+            }
+
             return mapper.map(category, CategoryDto.class);
         }
         return null;

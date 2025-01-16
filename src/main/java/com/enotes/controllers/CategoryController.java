@@ -3,9 +3,11 @@ package com.enotes.controllers;
 import com.enotes.dto.CategoryDto;
 import com.enotes.dto.CategoryResponse;
 import com.enotes.entities.Category;
+import com.enotes.exception.ResourceNotFoundException;
 import com.enotes.services.impl.CategoryServiceImpl;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/category")
+@Slf4j
 @Tag(name = "Category APIs")
 public class CategoryController {
 
@@ -44,12 +47,10 @@ public class CategoryController {
     }
 
     @GetMapping("/get-category/{id}")
-    public ResponseEntity<?> getCategoryById(@PathVariable Integer id){
+    public ResponseEntity<?> getCategoryById(@PathVariable Integer id) throws Exception {
         CategoryDto category = categoryService.getCategory(id);
-        if (category != null) {
-            return new ResponseEntity<>(category,HttpStatus.FOUND);
-        }
-        return new ResponseEntity<>("Category not found",HttpStatus.NOT_FOUND);
+        if (category != null) return new ResponseEntity<>(category,HttpStatus.FOUND);
+        return new ResponseEntity<>("Category not found with id: " + id, HttpStatus.NOT_FOUND);
     }
 
     @DeleteMapping("/delete-category/{id}")
