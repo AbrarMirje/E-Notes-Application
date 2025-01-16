@@ -6,6 +6,7 @@ import com.enotes.entities.Category;
 import com.enotes.exception.ResourceNotFoundException;
 import com.enotes.repositories.ICategoryRepository;
 import com.enotes.services.ICategoryService;
+import com.enotes.utils.Validations;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -21,13 +22,14 @@ public class CategoryServiceImpl implements ICategoryService {
 
     private final ICategoryRepository categoryRepository;
     private final ModelMapper mapper;
+    private final Validations validations;
 
     @Override
     public Boolean saveCategory(CategoryDto categoryDto) {
-//        Category category = new Category();
-//        category.setName(categoryDto.getName());
-//        category.setDescription(categoryDto.getDescription());
-//        category.setIsActive(categoryDto.getIsActive());
+
+        // Validation Checking
+        validations.categoryValidation(categoryDto);
+
 
         Category category = mapper.map(categoryDto, Category.class);
 
